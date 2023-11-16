@@ -1,0 +1,9 @@
+<launch>
+    <arg name="input_file" default="default_value"/> <!-- 定义一个名为input_file的参数，默认值为"default_value" -->
+    
+    <rosparam command="load" file="$(find detector)/config/task.yaml" />
+    
+    <!-- 使用args属性传递参数给detector_node -->
+    <node name="detector_node" pkg="detector" type="detector_node" output="screen" args="$(arg input_file)">
+    </node>
+</launch>

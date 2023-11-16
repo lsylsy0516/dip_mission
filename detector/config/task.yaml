@@ -1,0 +1,17 @@
+# dip task2 params
+
+# hsv upper and lower
+h_lower: 0
+s_lower: 115
+v_lower: 100
+h_upper: 180
+s_upper: 255
+v_upper: 255
+
+# adaptive matchtemplate
+threshold: 0.4
+scaleStep: 0.1
+minScale: 0.1
+maxScale: 1.0
+
+# give me a description of dip_mission
