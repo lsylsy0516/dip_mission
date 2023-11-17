@@ -4,6 +4,8 @@
 #include <pcl/io/pcd_io.h>
 #include <pcl/segmentation/extract_clusters.h>
 #include "utils/utils.h"
+#include "detector/Rect.h"
+#include "std_msgs/Int8.h"
 
 class Detector {
 public:
@@ -13,18 +15,38 @@ public:
     void run();
 
 private:
-    cv::VideoCapture cap;
-    ros::NodeHandle nh;
     int task;      // 0 for nurse, 1 for pile
+
+    ros::NodeHandle nh;
+    ros::Publisher rect_pub;
+    ros::Subscriber taskUpdate_sub;
+    detector::Rect rect_msg;
+    std::vector<cv::Rect> Rects;
+
+    cv::VideoCapture cap ;
     cv::Scalar lower_red ;
     cv::Scalar upper_red ;
 
-    double threshold = 0.75;
-    double scaleStep = 0.4;
-    double minScale = 0.4;
-    double maxScale = 1.6;
+    double nurse_threshold;
+    double nurse_scaleStep;
+    double nurse_minScale;
+    double nurse_maxScale;
+
+    double pile_threshold;
+    double pile_scaleStep;
+    double pile_minScale;
+    double pile_maxScale;
+
+    int h_lower;
+    int s_lower;
+    int v_lower;
+    int pile_h_upper;
+    int nurse_h_upper;
+    int s_upper;
+    int v_upper;
 
     void processFrame(const cv::Mat& frame);
+    void taskUpdateCallback(const std_msgs::Int8::ConstPtr& msg);
 };
 
 

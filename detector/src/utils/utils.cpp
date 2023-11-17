@@ -99,7 +99,7 @@ std::vector<cv::Point> Cluster(const cv::Mat& frame){
     return centers;
 }
 
-void adaptive_match(const cv::Mat& frame, const std::string& template_path,double threshold,double scaleStep,double minScale,double maxScale) {
+std::vector<cv::Rect> adaptive_match(const cv::Mat& frame, const std::string& template_path,double threshold,double scaleStep,double minScale,double maxScale) {
 
 
     cv::Mat templateImage = cv::imread(template_path);
@@ -166,4 +166,5 @@ void adaptive_match(const cv::Mat& frame, const std::string& template_path,doubl
     }
     // 显示结果
     cv::imshow("Matching Result", resultImage);
+    return matches;
 }

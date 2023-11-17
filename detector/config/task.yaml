@@ -4,14 +4,19 @@
 h_lower: 0
 s_lower: 115
 v_lower: 100
-h_upper: 180
+
+pile_h_upper: 10 # 10 for pile
+nurse_h_upper: 255 # 255 for nurse 
 s_upper: 255
 v_upper: 255
 
 # adaptive matchtemplate
-threshold: 0.4
-scaleStep: 0.1
-minScale: 0.1
-maxScale: 1.0
+nurse_threshold: 0.4
+nurse_scaleStep: 0.1
+nurse_minScale: 0.2
+nurse_maxScale: 1.0
 
-# give me a description of dip_mission
+pile_threshold: 0.8 
+pile_scaleStep: 0.2
+pile_minScale: 0.2
+pile_maxScale: 1.8
