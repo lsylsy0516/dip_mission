@@ -83,6 +83,10 @@ void Detector::processFrame(const cv::Mat& frame) {
         upper_red = cv::Scalar(pile_h_upper, s_upper, v_upper);
         cv::inRange(hsv, lower_red, upper_red, mask);
     }
+    else{
+        // turn right or left ,don't need to detect
+        return;
+    }
 
     // Perform closing operation on the mask
     int closing_size = 5; // Adjust the kernel size as needed
@@ -107,14 +111,20 @@ void Detector::processFrame(const cv::Mat& frame) {
         rect_msg.xs.push_back(rect.x);
         rect_msg.ys.push_back(rect.y);
         rect_msg.widths.push_back(rect.width);
+        rect_msg.heights.push_back(rect.height);
     }
 
+    if (Rects.size() == 0) {
+        ROS_INFO("No target detected.");
+    } else {
+        rect_pub.publish(rect_msg);    // Publish the message
+        rect_msg.xs.clear();
+        rect_msg.ys.clear();
+        rect_msg.widths.clear();
+        rect_msg.heights.clear();
+    }
 
-    rect_pub.publish(rect_msg);    // Publish the message
-
-    rect_msg.xs.clear();
-    rect_msg.ys.clear();
-    rect_msg.widths.clear();
+    
 }
 
 void Detector::taskUpdateCallback(const std_msgs::Int8::ConstPtr& msg) {

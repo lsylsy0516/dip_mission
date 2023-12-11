@@ -148,6 +148,12 @@ std::vector<cv::Rect> adaptive_match(const cv::Mat& frame, const std::string& te
                 int height = scaledTemplate.rows;
                 // std::cout << "Match at (" << centerX << ", " << centerY << ")  " << std::endl;
                 // std::cout << "Width: " << width << ", Height: " << height << std::endl;
+                
+                if (width < 80) {
+                    // std::cout << "Width or height too large. Skipping." << std::endl;
+                    continue;
+                }
+                
                 cv::Rect matchRect(centerX, centerY, width, height);
                 matches.push_back(matchRect);
             }

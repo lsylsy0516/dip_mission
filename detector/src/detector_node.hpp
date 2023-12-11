@@ -53,5 +53,7 @@ private:
 
 enum task_object{
     nurse=0,
-    pile
+    pile,
+    turn_left,
+    turn_right
 };

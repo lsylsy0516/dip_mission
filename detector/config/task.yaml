@@ -11,12 +11,23 @@ s_upper: 255
 v_upper: 255
 
 # adaptive matchtemplate
-nurse_threshold: 0.4
+nurse_threshold: 0.3
 nurse_scaleStep: 0.1
 nurse_minScale: 0.2
 nurse_maxScale: 1.0
 
-pile_threshold: 0.8 
-pile_scaleStep: 0.2
+pile_threshold: 0.72
+pile_scaleStep: 0.1
 pile_minScale: 0.2
-pile_maxScale: 1.8
+pile_maxScale: 1.8 # default 1.8
+
+# 桶相对于机器人距离阈值
+pile_thre: 0.5 # default 0.5
+
+vel: 0.5 # default 0.5
+vel_coef: 0.1 # default 0.1
+angular_coef: -0.1 # default -0.1
+pile_pre:  2.0 # default 2
+
+nurse_pre: 0.5 # nurse的pre
+nurse_coef: 1.0 # nurse的距离_coef

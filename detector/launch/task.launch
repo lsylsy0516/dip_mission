@@ -1,5 +1,5 @@
 <launch>
-    <arg name="input_file" default="default_value"/> <!-- 定义一个名为input_file的参数，默认值为"default_value" -->
+    <arg name="input_file" default=" "/> <!-- 定义一个名为input_file的参数，默认值为"空" -->
     
     <rosparam command="load" file="$(find detector)/config/task.yaml" />
     
