@@ -12,7 +12,7 @@ public:
     Detector(int argc, char** argv);
     ~Detector();
 
-    void run();
+    void run(int argc);
 
 private:
     int task;      // 0 for nurse, 1 for pile
@@ -44,6 +44,10 @@ private:
     int nurse_h_upper;
     int s_upper;
     int v_upper;
+
+    int camera_index;
+    int camera_width;
+    int camera_height;
 
     void processFrame(const cv::Mat& frame);
     void taskUpdateCallback(const std_msgs::Int8::ConstPtr& msg);

@@ -6,4 +6,8 @@
     <!-- 使用args属性传递参数给detector_node -->
     <node name="detector_node" pkg="detector" type="detector_node" output="screen" args="$(arg input_file)">
     </node>
+    
+    <!-- planner local_planner-->
+    <!-- <node name="local_planner_node" pkg="planner" type="local_planner" output="screen"> -->
+    <!-- </node> -->
 </launch>

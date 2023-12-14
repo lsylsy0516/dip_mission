@@ -6,22 +6,6 @@
 // 初始化类
 Detector::Detector(int argc, char** argv) {
 
-    if (argc > 1) {
-        const std::string video_filename = argv[1];
-        const std::string video_path = "/home/luo/Documents/dip_ws/bags/" + video_filename;
-        cap.open(video_path);
-    } else {
-        cap.open(0);
-    }
-    if (!cap.isOpened()) {
-        ROS_ERROR("Error opening video stream or file.");
-        ros::shutdown();
-    }
-
-    rect_pub = nh.advertise<detector::Rect>("rect", 10); 
-    taskUpdate_sub = nh.subscribe("taskUpdate", 10, &Detector::taskUpdateCallback, this);
-    task = task_object::pile ;  // 初始化任务识别为消防栓
-
     // 读取参数
     h_lower = nh.param<int>("h_lower", 0);
     s_lower = nh.param<int>("s_lower", 0);
@@ -41,6 +25,27 @@ Detector::Detector(int argc, char** argv) {
     pile_minScale = nh.param<double>("pile_minScale", 0);
     pile_maxScale = nh.param<double>("pile_maxScale", 0);
 
+    camera_index = nh.param<int>("camera_index", 0);
+    camera_width = nh.param<int>("camera_width", 0);
+    camera_height = nh.param<int>("camera_height", 0);
+
+    rect_pub = nh.advertise<detector::Rect>("rect", 10); 
+    taskUpdate_sub = nh.subscribe("taskUpdate", 10, &Detector::taskUpdateCallback, this);
+
+    if (argc > 1) {
+        const std::string video_filename = argv[1];
+        const std::string video_path = "/home/luo/Documents/dip_ws/bags/" + video_filename;
+        cap.open(video_path);
+    } else {
+        cap.open(camera_index);
+    }
+
+    if (!cap.isOpened()) {
+        ROS_ERROR("Error opening video stream or file.");
+        ros::shutdown();
+    }
+
+    task = task_object::pile ;  
 }
 
 Detector::~Detector() {
@@ -48,17 +53,24 @@ Detector::~Detector() {
     cap.release();
 }
 
-void Detector::run() {
+void Detector::run(int argc) {
     while (ros::ok()) {
         cv::Mat frame;
         cap >> frame;
+
+        if (argc == 1) // 使用摄像头时，需要将图像分成两半，只使用左半边
+            frame = frame(cv::Rect(0, 0, frame.cols / 2, frame.rows));
+        
+        // Resize the frame
+        cv::Size size = cv::Size(camera_width, camera_height);
+        cv::resize(frame, frame, size);
 
         if (frame.empty()) {
             ROS_INFO("End of video stream.");
             break;
         }
         processFrame(frame);
-        int key = cv::waitKey(1);
+        int key = cv::waitKey(10);
         if (key == 'q' || key == 27) {  // 'q' or Esc 
             break;
         }
@@ -83,8 +95,7 @@ void Detector::processFrame(const cv::Mat& frame) {
         upper_red = cv::Scalar(pile_h_upper, s_upper, v_upper);
         cv::inRange(hsv, lower_red, upper_red, mask);
     }
-    else{
-        // turn right or left ,don't need to detect
+    else{   // turn right or left ,don't need to detect
         return;
     }
 
@@ -95,16 +106,15 @@ void Detector::processFrame(const cv::Mat& frame) {
     
     // // Show the frames
     // cv::imshow("origin", frame);
-    // cv::imshow("mask",mask);
+    // cv::imshow("mask", mask);
+    // cv::waitKey(1000);
     
     if (task == task_object::nurse) {   // nurse
-        // std::cout<<"nurse"<<std::endl;
         const std::string template_path = "/home/luo/Documents/dip_ws/src/detector/pics/nurse.jpg";
-        Rects = adaptive_match(mask,template_path,nurse_threshold,nurse_scaleStep,nurse_minScale,nurse_maxScale);
+        Rects = adaptive_match(mask,template_path,nurse_threshold,nurse_scaleStep,nurse_minScale,nurse_maxScale,task);
     } else if (task == task_object::pile) { // pile
-        // std::cout<<"pile"<<std::endl;
         const std::string template_path = "/home/luo/Documents/dip_ws/src/detector/pics/pile.jpg";
-        Rects = adaptive_match(mask,template_path,pile_threshold,pile_scaleStep,pile_minScale,pile_maxScale);
+        Rects = adaptive_match(mask,template_path,pile_threshold,pile_scaleStep,pile_minScale,pile_maxScale,task);
     } 
     
     for (auto rect : Rects) {
@@ -136,6 +146,6 @@ int main(int argc, char** argv) {
     ros::init(argc, argv, "detector_node");
     ROS_INFO("detector_node inited");
     Detector detector(argc, argv);
-    detector.run();
+    detector.run(argc);
     return 0;
 }

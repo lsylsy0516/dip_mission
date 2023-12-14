@@ -1,33 +1,43 @@
 # dip task2 params
 
-# hsv upper and lower
+# camera params
+camera_index: 0 # default 0
+# resolution: 1280x720 , 640x480, 320x240
+camera_height: 480
+camera_width: 640 
+
+pile_width: 90
+
+# HSV 分割出桶和护士
 h_lower: 0
 s_lower: 115
 v_lower: 100
 
 pile_h_upper: 10 # 10 for pile
 nurse_h_upper: 255 # 255 for nurse 
+
 s_upper: 255
 v_upper: 255
 
-# adaptive matchtemplate
-nurse_threshold: 0.3
+
+# adaptive matchtemplate 
+nurse_threshold: 0.2
 nurse_scaleStep: 0.1
-nurse_minScale: 0.2
-nurse_maxScale: 1.0
+nurse_minScale: 0.1
+nurse_maxScale: 1.4
 
-pile_threshold: 0.72
+pile_threshold: 0.65
 pile_scaleStep: 0.1
-pile_minScale: 0.2
-pile_maxScale: 1.8 # default 1.8
+pile_minScale: 0.3
+pile_maxScale: 2.0 # default 1.8
 
-# 桶相对于机器人距离阈值
-pile_thre: 0.5 # default 0.5
+# planner coefs
+dis_to_turn: 0.5 # turn to left or right
 
-vel: 0.5 # default 0.5
-vel_coef: 0.1 # default 0.1
-angular_coef: -0.1 # default -0.1
-pile_pre:  2.0 # default 2
+vel_default: 0.15 
+vel_coef: 0.002 
+ang_coef: -0.1 # default -0.1
 
 nurse_pre: 0.5 # nurse的pre
 nurse_coef: 1.0 # nurse的距离_coef
+
