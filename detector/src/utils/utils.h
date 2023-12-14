@@ -24,9 +24,10 @@ std::vector<cv::Rect>removeFullyCoveredRectangles(const std::vector<cv::Rect>& i
     * @param scaleStep The step size for the scale
     * @param minScale The minimum scale
     * @param maxScale The maximum scale
+    * @param task The task to perform
     * @return The vector of rectangles
 */
-std::vector<cv::Rect> adaptive_match(const cv::Mat& frame, const std::string& template_path,double threshold,double scaleStep,double minScale,double maxScale);
+std::vector<cv::Rect> adaptive_match(const cv::Mat& frame, const std::string& template_path,double threshold,double scaleStep,double minScale,double maxScale,int task);
 
 /**
     * @brief Cluster the points in the frame
@@ -34,3 +35,13 @@ std::vector<cv::Rect> adaptive_match(const cv::Mat& frame, const std::string& te
     * @return The cluster centers
 */
 std::vector<cv::Point> Cluster(const cv::Mat& frame);
+
+
+/**
+ * @brief Find the best match
+ * @param matches The vector of matches
+ * @param frame The frame to search in
+ * @param templateImage The template image
+ * @return The vector of best match
+*/
+std::vector<cv::Rect> findBestMatch(std::vector<cv::Rect> matches, const cv::Mat frame, const cv::Mat templateImage);

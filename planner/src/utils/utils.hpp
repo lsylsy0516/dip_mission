@@ -9,4 +9,4 @@
 
 std::vector<cv::Point> getRealPosition(std::vector<cv::Rect>& Rects);
 
-void drawRealPosition(std::vector<cv::Point>& points);
+void drawRealPosition(std::vector<cv::Point>& points,int width, int height);
