@@ -1,0 +1,10 @@
+<launch>
+    <rosparam command="load" file="$(find planner)/config/task.yaml" />
+    <node name="local_planner_node" pkg="planner" type="local_planner" output="screen">
+    </node>
+    
+    <node name="global_planner_node" pkg="planner" type="global_planner" output="screen">
+    </node>
+
+
+</launch>

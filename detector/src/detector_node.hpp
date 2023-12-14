@@ -17,11 +17,17 @@ public:
 private:
     int task;      // 0 for nurse, 1 for pile
 
+
     ros::NodeHandle nh;
     ros::Publisher rect_pub;
     ros::Subscriber taskUpdate_sub;
+    
     detector::Rect rect_msg;
     std::vector<cv::Rect> Rects;
+
+    std::string video_dir_path;
+    std::string nurse_path;
+    std::string pile_path;
 
     cv::VideoCapture cap ;
     cv::Scalar lower_red ;

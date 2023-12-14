@@ -6,7 +6,12 @@ camera_index: 0 # default 0
 camera_height: 480
 camera_width: 640 
 
-pile_width: 90
+# relative_path
+video_dir_path: /home/luo/Documents/dip_ws/bags/
+nurse_path: /home/luo/Documents/dip_ws/src/detector/pics/nurse.jpg
+pile_path: /home/luo/Documents/dip_ws/src/detector/pics/pile.jpg
+
+pile_width: 90 # 模板的宽度
 
 # HSV 分割出桶和护士
 h_lower: 0
@@ -30,14 +35,3 @@ pile_threshold: 0.65
 pile_scaleStep: 0.1
 pile_minScale: 0.3
 pile_maxScale: 2.0 # default 1.8
-
-# planner coefs
-dis_to_turn: 0.5 # turn to left or right
-
-vel_default: 0.15 
-vel_coef: 0.002 
-ang_coef: -0.1 # default -0.1
-
-nurse_pre: 0.5 # nurse的pre
-nurse_coef: 1.0 # nurse的距离_coef
-

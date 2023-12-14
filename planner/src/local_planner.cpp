@@ -6,10 +6,17 @@
 Planner::Planner(int argc, char** argv)
 {   
     ROS_INFO("Planner node is starting");
+
+    task = task_object::pile;
+    left_angular_vel = ros::param::param<int>("left_angular_vel", 90);
+    left_turn_time = ros::param::param<int>("left_turn_time", 33);
+    right_angular_vel = ros::param::param<int>("right_angular_vel", -90);
+    right_turn_time = ros::param::param<int>("right_turn_time", 33);
+    control_freq = ros::param::param<int>("control_freq", 1);
+
     rect_sub = nh.subscribe("/rect", 1, &Planner::rectCallback, this);
     vel_pub = nh.advertise<geometry_msgs::Twist>("/cmd_vel", 1);
     task_update_sub = nh.subscribe("/taskUpdate", 1, &Planner::taskUpdateCallback, this);
-    task = task_object::pile;
 }
 
 Planner::~Planner()
@@ -19,7 +26,7 @@ Planner::~Planner()
 
 void Planner::run()
 {
-    ros::Rate loop_rate(10);
+    ros::Rate loop_rate(control_freq);
     while (ros::ok())
     {
         vel_pub.publish(vel_msg);
@@ -45,36 +52,10 @@ void Planner::rectCallback(const planner::Rect::ConstPtr& msg)
 void Planner::setVelocity(std::vector<cv::Point>& points)
 {
     if (task == task_object::pile){
-        cv::Point left_point   = cv::Point(1000, 1000);
-        cv::Point right_point  = cv::Point(1000, 1000);
-        cv::Point center_point = cv::Point(1000, 1000);
-        for (const auto& point:points)
-        {
-            if (point.x < -30)
-            {
-                if(left_point.y>point.y)
-                {
-                    left_point = point;
-                }
-            }
-            else if (point.x > 30)
-            {
-                if(right_point.y>point.y)
-                {
-                    right_point = point;
-                }
-            }
-            else{
-                if (abs(point.x)<abs(center_point.x))
-                {
-                    center_point = point;
-                }
-            }
-        }
-        if (center_point.x==1000)
-        {
-            center_point = cv::Point(0,250); // 为找到中心点，假设在中间
-        }
+        std::vector<cv::Point> LCR_point = get_LCR_point(points);
+        cv::Point left_point = LCR_point[0];
+        cv::Point center_point = LCR_point[1];
+        cv::Point right_point = LCR_point[2];
 
         ROS_INFO("left_point: (%d, %d)", left_point.x, left_point.y);
         ROS_INFO("right_point: (%d, %d)", right_point.x, right_point.y);
@@ -94,7 +75,8 @@ void Planner::setVelocity(std::vector<cv::Point>& points)
         // set the angular velocity
         int x_sum = left_point.x + right_point.x;
         vel_msg.angular.z = ang_coef* (x_sum);
-    } 
+    }
+    
     else if (task ==task_object::nurse)
     {
         // 只会返回一个rect
@@ -135,9 +117,8 @@ void Planner::taskUpdateCallback(const std_msgs::Int8::ConstPtr& msg)
 void Planner::TurnLeft()
 {
     vel_msg.linear.x = 0.0;
-    vel_msg.angular.z = -90;
-    ros::Rate loop_rate(33);
-    for (int i = 0; i < 10; i++)
+    ros::Rate loop_rate(10);
+    for (int i = 0; i < left_turn_time; i++)
     {
         vel_pub.publish(vel_msg);
         ros::spinOnce();
@@ -153,9 +134,9 @@ void Planner::TurnLeft()
 void Planner::TurnRight()
 {
     vel_msg.linear.x = 0.0;
-    vel_msg.angular.z = 90;
+    vel_msg.angular.z = right_angular_vel;
     ros::Rate loop_rate(10);
-    for (int i = 0; i < 33; i++)
+    for (int i = 0; i < right_turn_time; i++)
     {
         vel_pub.publish(vel_msg);
         ros::spinOnce();

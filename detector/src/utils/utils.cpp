@@ -214,3 +214,4 @@ std::vector<cv::Rect> findBestMatch(std::vector<cv::Rect> matches, const cv::Mat
     bestMatch.push_back(bestMatchRect);
     return bestMatch;
 }
+

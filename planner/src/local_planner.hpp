@@ -13,6 +13,11 @@ public:
 
 private:
     int task;      // 0 for nurse, 1 for pile
+    int left_angular_vel;
+    int left_turn_time;
+    int right_angular_vel;
+    int right_turn_time;
+    int control_freq;
 
     ros::NodeHandle nh;
     ros::Subscriber rect_sub;

@@ -10,10 +10,10 @@ Detector::Detector(int argc, char** argv) {
     h_lower = nh.param<int>("h_lower", 0);
     s_lower = nh.param<int>("s_lower", 0);
     v_lower = nh.param<int>("v_lower", 0);
-    pile_h_upper = nh.param<int>("pile_h_upper", 0);
-    nurse_h_upper = nh.param<int>("nurse_h_upper", 0);
     s_upper = nh.param<int>("s_upper", 0);
     v_upper = nh.param<int>("v_upper", 0);
+    pile_h_upper = nh.param<int>("pile_h_upper", 0);
+    nurse_h_upper = nh.param<int>("nurse_h_upper", 0);
 
     nurse_threshold = nh.param<double>("nurse_threshold", 0);
     nurse_scaleStep = nh.param<double>("nurse_scaleStep", 0);
@@ -29,12 +29,16 @@ Detector::Detector(int argc, char** argv) {
     camera_width = nh.param<int>("camera_width", 0);
     camera_height = nh.param<int>("camera_height", 0);
 
+    video_dir_path = nh.param<std::string>("video_dir_path", "");
+    nurse_path = nh.param<std::string>("nurse_path", "");
+    pile_path = nh.param<std::string>("pile_path", "");
+
     rect_pub = nh.advertise<detector::Rect>("rect", 10); 
     taskUpdate_sub = nh.subscribe("taskUpdate", 10, &Detector::taskUpdateCallback, this);
 
     if (argc > 1) {
         const std::string video_filename = argv[1];
-        const std::string video_path = "/home/luo/Documents/dip_ws/bags/" + video_filename;
+        const std::string video_path = video_dir_path + video_filename;
         cap.open(video_path);
     } else {
         cap.open(camera_index);
@@ -110,10 +114,10 @@ void Detector::processFrame(const cv::Mat& frame) {
     // cv::waitKey(1000);
     
     if (task == task_object::nurse) {   // nurse
-        const std::string template_path = "/home/luo/Documents/dip_ws/src/detector/pics/nurse.jpg";
+        const std::string template_path = nurse_path;
         Rects = adaptive_match(mask,template_path,nurse_threshold,nurse_scaleStep,nurse_minScale,nurse_maxScale,task);
     } else if (task == task_object::pile) { // pile
-        const std::string template_path = "/home/luo/Documents/dip_ws/src/detector/pics/pile.jpg";
+        const std::string template_path = pile_path;
         Rects = adaptive_match(mask,template_path,pile_threshold,pile_scaleStep,pile_minScale,pile_maxScale,task);
     } 
     

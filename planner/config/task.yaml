@@ -1,0 +1,29 @@
+# planner coefs
+# 频率
+conrtol_freq: 2
+
+
+vel_default: 0.1 
+vel_coef: 0.002 
+ang_coef: -0.1 # default -0.1
+
+nurse_pre: 0.5 # nurse的pre
+nurse_coef: 1.0 # nurse的距离_coef
+
+
+left_angular_vel: -90
+right_angular_vel: 90
+left_turn_time: 33
+right_turn_time: 33
+
+# realpose pic params
+pose_width: 500
+pose_height: 500
+
+# left center right params
+center_thre: 100
+left_thre: 50
+right_thre: 50
+
+# global_planner params
+dis_to_turn: 0.5 # turn to left or right

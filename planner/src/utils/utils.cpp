@@ -47,36 +47,11 @@ void drawRealPosition(std::vector<cv::Point>& points,int width, int height){
         cv::circle(img, target, 5, cv::Scalar(0, 255, 0), -1);
     }
 
-    cv::Point left_point   = cv::Point(1000, 1000);
-    cv::Point right_point  = cv::Point(1000, 1000);
-    cv::Point center_point = cv::Point(1000, 1000);
-    for (const auto& point:points)
-    {
-        if (point.x < -30)
-        {
-            if(left_point.y>point.y)
-            {
-                left_point = point;
-            }
-        }
-        else if (point.x > 30)
-        {
-            if(right_point.y>point.y)
-            {
-                right_point = point;
-            }
-        }
-        else{
-            if (abs(point.x)<abs(center_point.x))
-                {
-                    center_point = point;
-                }
-        }
-    }
-    if (center_point.x==1000)
-    {
-        center_point = cv::Point(0,250); // 为找到中心点，假设在中间
-    }
+    // 绘制左中右三个点
+    std::vector<cv::Point> LCR_point = get_LCR_point(points);
+    cv::Point left_point = LCR_point[0];
+    cv::Point center_point = LCR_point[1];
+    cv::Point right_point = LCR_point[2];
 
 
     left_point = cv::Point(left_point.x+width/2,height-left_point.y);
@@ -94,3 +69,48 @@ void drawRealPosition(std::vector<cv::Point>& points,int width, int height){
     }
 }
 
+std::vector<cv::Point> get_LCR_point(std::vector<cv::Point>& points){
+    cv::Point left_point   = cv::Point(1000, 1000);
+    cv::Point right_point  = cv::Point(1000, 1000);
+    cv::Point center_point = cv::Point(1000, 1000);
+
+    int center_thre = ros::param::param<int>("center_thre", 0);
+    int left_thre = ros::param::param<int>("left_thre", 0);
+    int right_thre = ros::param::param<int>("right_thre", 0);
+
+    for (const auto& point:points)
+    {
+        if (point.x < -left_thre)
+        {
+            if(left_point.y>point.y) // 找到最近的点
+            {
+                left_point = point;
+            }
+        }
+        else if (point.x > right_thre)
+        {
+            if(right_point.y>point.y)
+            {
+                right_point = point;
+            }
+        }
+        
+        if (abs(point.x)<center_thre){
+            if (abs(point.x)<abs(center_point.x))
+                {
+                    center_point = point;
+                }
+        }
+    }
+
+    if (center_point.x==1000)
+    {
+        center_point = cv::Point(0,250); // 为找到中心点，假设在中间
+    }
+    
+    std::vector<cv::Point> LCR_point;
+    LCR_point.push_back(left_point);
+    LCR_point.push_back(center_point);
+    LCR_point.push_back(right_point);
+    return LCR_point;
+}
