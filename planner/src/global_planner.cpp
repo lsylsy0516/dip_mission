@@ -3,8 +3,8 @@
 #include "opencv2/opencv.hpp"
 #include "utils/utils.hpp"
 
-GlobalPlanner::GlobalPlanner(int argc, char** argv)
-{   
+GlobalPlanner::GlobalPlanner(int argc, char **argv)
+{
     ROS_INFO("Global planner node is starting");
     rect_sub = nh.subscribe("/rect", 1, &GlobalPlanner::rectCallback, this);
     task_finish_sub = nh.subscribe("/taskFinish", 1, &GlobalPlanner::taskFinishCallback, this);
@@ -26,7 +26,7 @@ void GlobalPlanner::run()
     }
 }
 
-void GlobalPlanner::rectCallback(const planner::Rect::ConstPtr& msg)
+void GlobalPlanner::rectCallback(const planner::Rect::ConstPtr &msg)
 {
     ROS_INFO("-----------------------------------");
     ROS_INFO("Received rect message");
@@ -40,16 +40,18 @@ void GlobalPlanner::rectCallback(const planner::Rect::ConstPtr& msg)
     setTask(points);
 }
 
-void GlobalPlanner::setTask(std::vector<cv::Point>& points)
+void GlobalPlanner::setTask(std::vector<cv::Point> &points)
 {
-    if (task == task_object::nurse){
+    if (task == task_object::nurse)
+    {
         // 上一时刻的任务为nurse,则保持不变
         return;
     }
-    if (task == task_object::pile){
+    if (task == task_object::pile)
+    {
         // 上一时刻的任务为pile
         // 找到最左边和最右边的点，并更新
-        for (const auto& point:points)
+        for (const auto &point : points)
         {
             if (point.x < left_point.x)
             {
@@ -59,23 +61,23 @@ void GlobalPlanner::setTask(std::vector<cv::Point>& points)
             {
                 right_point = point;
             }
-            if (abs(point.x)<abs(center_point.x))
+            if (abs(point.x) < abs(center_point.x))
             {
                 center_point = point;
-            } 
+            }
         }
 
-        if (abs(left_point.x)>abs(right_point.x))
+        if (abs(left_point.x) > abs(right_point.x))
         {
-            left_or_right = 0;  // 左边的点更远，说明要向左转
+            left_or_right = 0; // 左边的点更远，说明要向左转
         }
         else
         {
             left_or_right = 1; // 反之往右转
         }
 
-        float pile_thre = nh.param<float>("pile_thre", 0.5);
-        if (center_point.y<pile_thre)
+        float dis_to_turn = nh.param<float>("dis_to_turn", 0.5);
+        if (center_point.y < dis_to_turn)
         {
             if (left_or_right == 0)
             {
@@ -91,12 +93,14 @@ void GlobalPlanner::setTask(std::vector<cv::Point>& points)
             }
         }
     }
-    if (task == task_object::turn_left){
+    if (task == task_object::turn_left)
+    {
         task = task_object::pile;
         task_msg.data = task;
         task_pub.publish(task_msg);
     }
-    if (task == task_object::turn_right){
+    if (task == task_object::turn_right)
+    {
         task = task_object::pile;
         task_msg.data = task;
         task_pub.publish(task_msg);
@@ -105,26 +109,28 @@ void GlobalPlanner::setTask(std::vector<cv::Point>& points)
 
 void GlobalPlanner::setTask()
 {
-    if (task == task_object::turn_left){
+    if (task == task_object::turn_left)
+    {
         task = task_object::pile;
         task_msg.data = task;
         task_pub.publish(task_msg);
     }
-    if (task == task_object::turn_right){
+    if (task == task_object::turn_right)
+    {
         task = task_object::pile;
         task_msg.data = task;
         task_pub.publish(task_msg);
     }
 }
 
-void GlobalPlanner::taskFinishCallback(const std_msgs::Int8::ConstPtr& msg)
+void GlobalPlanner::taskFinishCallback(const std_msgs::Int8::ConstPtr &msg)
 {
     ROS_INFO("-----------------------------------");
     ROS_INFO("Received taskFinish message");
     setTask();
 }
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     ros::init(argc, argv, "global_planner");
     GlobalPlanner global_planner(argc, argv);
