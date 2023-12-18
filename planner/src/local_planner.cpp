@@ -15,7 +15,9 @@ Planner::Planner(int argc, char** argv)
     control_freq = ros::param::param<int>("control_freq", 1);
 
     rect_sub = nh.subscribe("/rect", 1, &Planner::rectCallback, this);
-    vel_pub = nh.advertise<geometry_msgs::Twist>("/cmd_vel", 1);
+
+    std::string vel_topic = nh.param<std::string>("vel_topic", "/cmd_vel");
+    vel_pub = nh.advertise<geometry_msgs::Twist>(vel_topic, 1);
     task_update_sub = nh.subscribe("/taskUpdate", 1, &Planner::taskUpdateCallback, this);
 }
 

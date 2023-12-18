@@ -5,6 +5,7 @@ left_or_right: 2 # 0: nurse 1:pile 2: left 3: right
 # 频率
 conrtol_freq: 2
 
+vel_topic: /cmd_vel # change if you are just debugging
 
 vel_default: 0.1 
 vel_coef: 0.002 
