@@ -21,8 +21,9 @@ left_turn_time: 33
 right_turn_time: 33
 
 # realpose pic params
-pose_width: 500
-pose_height: 500
+pic_width: 640
+pic_height: 480
+
 
 # left center right params
 center_thre: 100
@@ -31,3 +32,4 @@ right_thre: 50
 
 # global_planner params
 dis_to_turn: 0.5 # turn to left or right
+

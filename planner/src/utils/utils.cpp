@@ -29,7 +29,9 @@ std::vector<cv::Point> getRealPosition(std::vector<cv::Rect>& Rects){
         // ROS_INFO("Real position: x=%d, y=%d,width=%d ", point.x, point.y, rect.width);
     
     }
-    drawRealPosition(realPosition,2000,500);
+    int width = ros::param::param<int>("pic_width", 0);
+    int height = ros::param::param<int>("pic_height", 0);
+    drawRealPosition(realPosition,width,height);
     return realPosition;
 }
 

@@ -15,7 +15,7 @@ Planner::Planner(int argc, char** argv)
     control_freq = ros::param::param<int>("control_freq", 1);
 
     rect_sub = nh.subscribe("/rect", 1, &Planner::rectCallback, this);
-
+    
     std::string vel_topic = nh.param<std::string>("vel_topic", "/cmd_vel");
     vel_pub = nh.advertise<geometry_msgs::Twist>(vel_topic, 1);
     task_update_sub = nh.subscribe("/taskUpdate", 1, &Planner::taskUpdateCallback, this);
@@ -119,18 +119,21 @@ void Planner::taskUpdateCallback(const std_msgs::Int8::ConstPtr& msg)
 void Planner::TurnLeft()
 {
     vel_msg.linear.x = 0.0;
+    vel_msg.angular.z = left_angular_vel;
     ros::Rate loop_rate(10);
     for (int i = 0; i < left_turn_time; i++)
     {
         vel_pub.publish(vel_msg);
         ros::spinOnce();
         loop_rate.sleep();
+        ROS_INFO("Turning left");
     }
 
     ros::Publisher finish_pub = nh.advertise<std_msgs::Int8>("/taskFinished", 1);
     std_msgs::Int8 finish_msg;
     finish_msg.data = 1;
     finish_pub.publish(finish_msg);
+    ROS_INFO("Turn left finished");
 }
 
 void Planner::TurnRight()
@@ -140,6 +143,7 @@ void Planner::TurnRight()
     ros::Rate loop_rate(10);
     for (int i = 0; i < right_turn_time; i++)
     {
+        ROS_INFO("Turning right");
         vel_pub.publish(vel_msg);
         ros::spinOnce();
         loop_rate.sleep();
@@ -148,7 +152,8 @@ void Planner::TurnRight()
     ros::Publisher finish_pub = nh.advertise<std_msgs::Int8>("/taskFinished", 1);
     std_msgs::Int8 finish_msg;
     finish_msg.data = task_object::pile;
-    finish_pub.publish(finish_msg);    
+    finish_pub.publish(finish_msg);
+    ROS_INFO("Turn right finished");    
 }
 
 int main(int argc, char * argv[])

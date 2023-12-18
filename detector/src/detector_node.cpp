@@ -100,6 +100,7 @@ void Detector::processFrame(const cv::Mat& frame) {
         cv::inRange(hsv, lower_red, upper_red, mask);
     }
     else{   // turn right or left ,don't need to detect
+        ROS_INFO("turn right or left ,don't need to detect");
         return;
     }
 
