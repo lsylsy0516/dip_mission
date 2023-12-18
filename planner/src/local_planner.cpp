@@ -12,7 +12,9 @@ Planner::Planner(int argc, char** argv)
     left_turn_time = ros::param::param<int>("left_turn_time", 33);
     right_angular_vel = ros::param::param<int>("right_angular_vel", -90);
     right_turn_time = ros::param::param<int>("right_turn_time", 33);
-    control_freq = ros::param::param<int>("control_freq", 1);
+    control_freq = ros::param::param<int>("control_freq", 10);
+    max_angular_vel =  ros::param::param<double>("max_ang_vel", 100);
+    max_vel = ros::param::param<double>("max_vel", 100);
 
     rect_sub = nh.subscribe("/rect", 1, &Planner::rectCallback, this);
     
@@ -32,6 +34,8 @@ void Planner::run()
     while (ros::ok())
     {
         vel_pub.publish(vel_msg);
+        vel_msg.linear.x = 0;
+        vel_msg.angular.z = 0;
         ros::spinOnce();
         loop_rate.sleep();
     }
@@ -83,20 +87,23 @@ void Planner::setVelocity(std::vector<cv::Point>& points)
     {
         // 只会返回一个rect
         cv::Point point = points[0];
+        // ROS_INFO("point: (%d, %d)", point.x, point.y);
+        
         // set the velocity
-        if (point.y > 10) // use default velocity
-            {
-            double t = nh.param<double>("vel", 0.0);
-            ROS_INFO("t=%f", t);
-            vel_msg.linear.x = t;}
-        else{
-            double t =  0.1+0.1*point.y;
-            ROS_INFO("t=%f", t);
-            vel_msg.linear.x = t;}
+        int dis_thre = nh.param<int>("dis_thre", 0);
+        double nurse_coef = nh.param<double>("nurse_coef", 0.0);
+        double vel_linear = double(point.y-dis_thre) * nurse_coef;
+        if ( vel_linear >max_vel)
+            vel_linear = max_vel;
+        else if (vel_linear < -max_vel)
+            vel_linear = -max_vel; 
+
+        ROS_INFO("vel_linear: %f", vel_linear);
+        vel_msg.linear.x = vel_linear;
         
         // set the angular velocity
-        float pre = nh.param<double>("nurse_coef", 0.0);
-        vel_msg.angular.z = 0.05 * (point.x-pre);
+        // float pre = nh.param<double>("nurse_coef", 0.0);
+        // vel_msg.angular.z = 0.05 * (point.x-pre);
     }
 
     ROS_INFO("Velocity: linear.x=%f, angular.z=%f", vel_msg.linear.x, vel_msg.angular.z);

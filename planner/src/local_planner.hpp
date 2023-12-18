@@ -18,6 +18,8 @@ private:
     int right_angular_vel;
     int right_turn_time;
     int control_freq;
+    double max_vel;
+    double max_angular_vel;
 
     ros::NodeHandle nh;
     ros::Subscriber rect_sub;

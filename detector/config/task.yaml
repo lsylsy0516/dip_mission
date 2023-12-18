@@ -1,23 +1,22 @@
 # dip task2 params
 
 # camera params
-camera_index: 0 # default 0
+camera_index: 2 # default 2
 # resolution: 1280x720 , 640x480, 320x240
 camera_height: 480
 camera_width: 640 
 
 # relative_path
 video_dir_path: /home/luo/Documents/dip_ws/bags/
-nurse_path: /home/luo/Documents/dip_ws/src/detector/pics/nurse.jpg
-pile_path: /home/luo/Documents/dip_ws/src/detector/pics/pile.jpg
+nurse_path: /home/eaibot/Documents/dip_ws/src/dip_mission/detector/pics/nurse.jpg
+pile_path: /home/eaibot/Documents/dip_ws/src/dip_mission/detector/pics/pile.jpg
 
 pile_width: 90 # 模板的宽度
 
 # HSV 分割出桶和护士
 h_lower: 0
 s_lower: 115
-v_lower: 100
-
+v_lower: 50 #default 100
 pile_h_upper: 10 # 10 for pile
 nurse_h_upper: 255 # 255 for nurse 
 
@@ -26,10 +25,10 @@ v_upper: 255
 
 
 # adaptive matchtemplate 
-nurse_threshold: 0.2
+nurse_threshold: 0.3
 nurse_scaleStep: 0.1
 nurse_minScale: 0.1
-nurse_maxScale: 1.4
+nurse_maxScale: 1.5
 
 pile_threshold: 0.65
 pile_scaleStep: 0.1

@@ -49,7 +49,7 @@ Detector::Detector(int argc, char** argv) {
         ros::shutdown();
     }
 
-    task = task_object::pile ;  
+    task = task_object::nurse;  
 }
 
 Detector::~Detector() {
@@ -73,6 +73,7 @@ void Detector::run(int argc) {
             ROS_INFO("End of video stream.");
             break;
         }
+        imshow("origin", frame);
         processFrame(frame);
         int key = cv::waitKey(10);
         if (key == 'q' || key == 27) {  // 'q' or Esc 

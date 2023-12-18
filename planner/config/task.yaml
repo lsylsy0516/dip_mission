@@ -2,8 +2,11 @@
 
 left_or_right: 2 # 0: nurse 1:pile 2: left 3: right
 
+max_vel: 0.2
+max_ang_vel: 0.1
+
 # 频率
-conrtol_freq: 2
+control_freq: 4
 
 vel_topic: /cmd_vel # change if you are just debugging
 
@@ -11,8 +14,6 @@ vel_default: 0.1
 vel_coef: 0.002 
 ang_coef: -0.1 # default -0.1
 
-nurse_pre: 0.5 # nurse的pre
-nurse_coef: 1.0 # nurse的距离_coef
 
 
 left_angular_vel: -90
@@ -33,3 +34,7 @@ right_thre: 50
 # global_planner params
 dis_to_turn: 0.5 # turn to left or right
 
+# nurse_param
+dis_thre: 90
+
+nurse_coef: 0.01 # nurse的距离_coef
