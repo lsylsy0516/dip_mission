@@ -2,6 +2,8 @@
     <arg name="input_file" default=" "/> <!-- 定义一个名为input_file的参数，默认值为"空" -->
     
     <rosparam command="load" file="$(find detector)/config/task.yaml" />
+
+    <rosparam command="load" file="$(find planner)/config/task.yaml" />
     
     <!-- 使用args属性传递参数给detector_node -->
     <node name="detector_node" pkg="detector" type="detector_node" output="screen" args="$(arg input_file)">

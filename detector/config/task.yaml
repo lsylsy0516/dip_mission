@@ -8,14 +8,15 @@ camera_width: 640
 
 # relative_path
 video_dir_path: /home/luo/Documents/dip_ws/bags/
-nurse_path: /home/eaibot/Documents/dip_ws/src/dip_mission/detector/pics/nurse.jpg
-pile_path: /home/eaibot/Documents/dip_ws/src/dip_mission/detector/pics/pile.jpg
+nurse_path: /home/eaibot/Documents/dip_lsy/src/dip_mission/detector/pics/nurse.jpg
+pile_path: /home/eaibot/Documents/dip_lsy/src/dip_mission/detector/pics/pile.jpg
 
 pile_width: 90 # 模板的宽度
+time_thre: 10
 
 # HSV 分割出桶和护士
 h_lower: 0
-s_lower: 115
+s_lower: 90
 v_lower: 50 #default 100
 pile_h_upper: 10 # 10 for pile
 nurse_h_upper: 255 # 255 for nurse 
@@ -28,9 +29,9 @@ v_upper: 255
 nurse_threshold: 0.3
 nurse_scaleStep: 0.1
 nurse_minScale: 0.1
-nurse_maxScale: 1.5
+nurse_maxScale: 1.0
 
 pile_threshold: 0.65
 pile_scaleStep: 0.1
-pile_minScale: 0.3
+pile_minScale: 0.1
 pile_maxScale: 2.0 # default 1.8

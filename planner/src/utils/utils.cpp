@@ -60,9 +60,9 @@ void drawRealPosition(std::vector<cv::Point>& points,int width, int height){
     right_point = cv::Point(right_point.x+width/2,height-right_point.y);
     center_point = cv::Point(center_point.x+width/2,height-center_point.y);
 
-    cv::circle(img,left_point,5,cv::Scalar(255,255,0),-1);
-    cv::circle(img,right_point,5,cv::Scalar(255,255,0),-1);
-    cv::circle(img,center_point,5,cv::Scalar(255,255,0),-1);
+    cv::circle(img,left_point,5,cv::Scalar(255,0,0),-1);
+    cv::circle(img,right_point,5,cv::Scalar(255,255,255),-1);
+    cv::circle(img,center_point,5,cv::Scalar(0,255,255),-1);
 
     cv::imshow("real position", img);
     int key = cv::waitKey(1);
@@ -72,7 +72,7 @@ void drawRealPosition(std::vector<cv::Point>& points,int width, int height){
 }
 
 std::vector<cv::Point> get_LCR_point(std::vector<cv::Point>& points){
-    cv::Point left_point   = cv::Point(1000, 1000);
+    cv::Point left_point   = cv::Point(-1000, 1000);
     cv::Point right_point  = cv::Point(1000, 1000);
     cv::Point center_point = cv::Point(1000, 1000);
 
@@ -82,6 +82,7 @@ std::vector<cv::Point> get_LCR_point(std::vector<cv::Point>& points){
 
     for (const auto& point:points)
     {
+        
         if (point.x < -left_thre)
         {
             if(left_point.y>point.y) // 找到最近的点
@@ -91,7 +92,7 @@ std::vector<cv::Point> get_LCR_point(std::vector<cv::Point>& points){
         }
         else if (point.x > right_thre)
         {
-            if(right_point.y>point.y)
+            if (right_point.y > point.y)
             {
                 right_point = point;
             }
@@ -109,7 +110,11 @@ std::vector<cv::Point> get_LCR_point(std::vector<cv::Point>& points){
     {
         center_point = cv::Point(0,250); // 为找到中心点，假设在中间
     }
-    
+    if (left_point.x == -1000)
+        left_point = cv::Point(0, 200);
+    if (right_point.x == 1000)
+        right_point = cv::Point(0, 300);
+
     std::vector<cv::Point> LCR_point;
     LCR_point.push_back(left_point);
     LCR_point.push_back(center_point);

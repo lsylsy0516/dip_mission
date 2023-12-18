@@ -16,12 +16,14 @@ public:
 
 private:
     int task;      // 0 for nurse, 1 for pile
-
+    int time_thre;
+    int count;
 
     ros::NodeHandle nh;
     ros::Publisher rect_pub;
     ros::Subscriber taskUpdate_sub;
-    
+    ros::Publisher finish_pub;
+
     detector::Rect rect_msg;
     std::vector<cv::Rect> Rects;
 

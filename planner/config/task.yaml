@@ -1,9 +1,8 @@
 # planner coefs
 
-left_or_right: 2 # 0: nurse 1:pile 2: left 3: right
+left_or_right: 3 # 0: nurse 1:pile 2: left 3: right
 
 max_vel: 0.2
-max_ang_vel: 0.1
 
 # 频率
 control_freq: 4
@@ -12,29 +11,33 @@ vel_topic: /cmd_vel # change if you are just debugging
 
 vel_default: 0.1 
 vel_coef: 0.002 
-ang_coef: -0.1 # default -0.1
+ang_coef: 0.0005 # default -0.1
 
 
 
-left_angular_vel: -90
-right_angular_vel: 90
-left_turn_time: 33
-right_turn_time: 33
+left_angular_vel: 90
+right_angular_vel: -90
+left_turn_time: 38
+right_turn_time: 38
+forward_time: 30
+forward_vel: 0.1
 
 # realpose pic params
 pic_width: 640
 pic_height: 480
 
 
-# left center right params
+# left center right params , all abs
 center_thre: 100
-left_thre: 50
+left_thre: 50 
 right_thre: 50
+ang_pre: 15
 
 # global_planner params
-dis_to_turn: 0.5 # turn to left or right
+dis_to_turn: 60 # turn to left or right
 
 # nurse_param
 dis_thre: 90
 
 nurse_coef: 0.01 # nurse的距离_coef
+nurse_angle_coef: -0.01

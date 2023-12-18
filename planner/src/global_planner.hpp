@@ -13,9 +13,10 @@ public:
 private:
     int task;      // 0 for nurse, 1 for pile , 2 for turn left, 3 for turn right
     int left_or_right; // 0 for left, 1 for right
+    int taskFinishFlag;
     cv::Point left_point;
     cv::Point right_point;
-    cv::Point center_point;
+
 
     ros::NodeHandle nh;
     ros::Subscriber rect_sub;

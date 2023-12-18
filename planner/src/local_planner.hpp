@@ -17,6 +17,8 @@ private:
     int left_turn_time;
     int right_angular_vel;
     int right_turn_time;
+    float forward_vel;
+    int forward_time;
     int control_freq;
     double max_vel;
     double max_angular_vel;
@@ -24,6 +26,7 @@ private:
     ros::NodeHandle nh;
     ros::Subscriber rect_sub;
     ros::Publisher vel_pub;
+    ros::Publisher finish_pub;
     ros::Subscriber task_update_sub;
 
     geometry_msgs::Twist vel_msg;
@@ -33,6 +36,7 @@ private:
     void setVelocity(std::vector<cv::Point>& points);
     void TurnLeft();
     void TurnRight();
+    void StepForward();
 };
 
 enum task_object{

@@ -8,19 +8,24 @@ Planner::Planner(int argc, char** argv)
     ROS_INFO("Planner node is starting");
 
     task = task_object::pile;
+    
     left_angular_vel = ros::param::param<int>("left_angular_vel", 90);
     left_turn_time = ros::param::param<int>("left_turn_time", 33);
     right_angular_vel = ros::param::param<int>("right_angular_vel", -90);
     right_turn_time = ros::param::param<int>("right_turn_time", 33);
+    forward_time = ros::param::param<int>("forward_time", 20);
+    forward_vel = ros::param::param<float>("forward_vel", 0);
+
     control_freq = ros::param::param<int>("control_freq", 10);
     max_angular_vel =  ros::param::param<double>("max_ang_vel", 100);
     max_vel = ros::param::param<double>("max_vel", 100);
 
     rect_sub = nh.subscribe("/rect", 1, &Planner::rectCallback, this);
+    task_update_sub = nh.subscribe("/taskUpdate", 1, &Planner::taskUpdateCallback, this);
     
     std::string vel_topic = nh.param<std::string>("vel_topic", "/cmd_vel");
     vel_pub = nh.advertise<geometry_msgs::Twist>(vel_topic, 1);
-    task_update_sub = nh.subscribe("/taskUpdate", 1, &Planner::taskUpdateCallback, this);
+    finish_pub = nh.advertise<std_msgs::Int8>("/taskFinish", 1);
 }
 
 Planner::~Planner()
@@ -33,9 +38,6 @@ void Planner::run()
     ros::Rate loop_rate(control_freq);
     while (ros::ok())
     {
-        vel_pub.publish(vel_msg);
-        vel_msg.linear.x = 0;
-        vel_msg.angular.z = 0;
         ros::spinOnce();
         loop_rate.sleep();
     }
@@ -70,24 +72,29 @@ void Planner::setVelocity(std::vector<cv::Point>& points)
         double vel_coef = nh.param<double>("vel_coef", 0.0);
         double ang_coef = nh.param<double>("ang_coef", 0.0);
 
+        // set the angular velocity
+        int x_sum = left_point.x + right_point.x;
+        int pre = nh.param<int>("ang_pre", 0);
+        x_sum -= pre;
+        vel_msg.angular.z = ang_coef * (x_sum);
+
+        int dis_to_turn = nh.param<int>("dis_to_turn", 62);
         // set the velocity
         if (center_point.y > 100) // use default velocity
             vel_msg.linear.x = nh.param<double>("vel_default", 0.0);
-        else if(center_point.y > 52)
+        else if(center_point.y > dis_to_turn)
             vel_msg.linear.x = vel_coef*(center_point.y-55);
-        else
-            vel_msg.linear.x = 0.01;
-
-        // set the angular velocity
-        int x_sum = left_point.x + right_point.x;
-        vel_msg.angular.z = ang_coef* (x_sum);
+        else{
+            vel_msg.linear.x = 0;
+            vel_msg.angular.z = 0;
+        }
     }
     
     else if (task ==task_object::nurse)
     {
         // 只会返回一个rect
         cv::Point point = points[0];
-        // ROS_INFO("point: (%d, %d)", point.x, point.y);
+        ROS_INFO("point: (%d, %d)", point.x, point.y);
         
         // set the velocity
         int dis_thre = nh.param<int>("dis_thre", 0);
@@ -102,10 +109,10 @@ void Planner::setVelocity(std::vector<cv::Point>& points)
         vel_msg.linear.x = vel_linear;
         
         // set the angular velocity
-        // float pre = nh.param<double>("nurse_coef", 0.0);
-        // vel_msg.angular.z = 0.05 * (point.x-pre);
+        float coef = nh.param<double>("nurse_angle_coef", 0.0);
+        vel_msg.angular.z = coef * point.x;
     }
-
+    vel_pub.publish(vel_msg);
     ROS_INFO("Velocity: linear.x=%f, angular.z=%f", vel_msg.linear.x, vel_msg.angular.z);
 }
 
@@ -125,7 +132,8 @@ void Planner::taskUpdateCallback(const std_msgs::Int8::ConstPtr& msg)
 
 void Planner::TurnLeft()
 {
-    vel_msg.linear.x = 0.0;
+    StepForward();
+    vel_msg.linear.x = 0.1;
     vel_msg.angular.z = left_angular_vel;
     ros::Rate loop_rate(10);
     for (int i = 0; i < left_turn_time; i++)
@@ -136,7 +144,6 @@ void Planner::TurnLeft()
         ROS_INFO("Turning left");
     }
 
-    ros::Publisher finish_pub = nh.advertise<std_msgs::Int8>("/taskFinished", 1);
     std_msgs::Int8 finish_msg;
     finish_msg.data = 1;
     finish_pub.publish(finish_msg);
@@ -145,7 +152,8 @@ void Planner::TurnLeft()
 
 void Planner::TurnRight()
 {
-    vel_msg.linear.x = 0.0;
+    StepForward();
+    vel_msg.linear.x = 0.1;
     vel_msg.angular.z = right_angular_vel;
     ros::Rate loop_rate(10);
     for (int i = 0; i < right_turn_time; i++)
@@ -156,11 +164,25 @@ void Planner::TurnRight()
         loop_rate.sleep();
     }
 
-    ros::Publisher finish_pub = nh.advertise<std_msgs::Int8>("/taskFinished", 1);
+    
     std_msgs::Int8 finish_msg;
     finish_msg.data = task_object::pile;
     finish_pub.publish(finish_msg);
     ROS_INFO("Turn right finished");    
+}
+
+void Planner::StepForward()
+{
+    vel_msg.linear.x = forward_vel;
+    vel_msg.angular.z = 0.0;
+    ros::Rate loop_rate(10);
+    for (int i = 0; i < forward_time; i++)
+    {
+        ROS_INFO("Step_Forward");
+        vel_pub.publish(vel_msg);
+        ros::spinOnce();
+        loop_rate.sleep();
+    }
 }
 
 int main(int argc, char * argv[])
