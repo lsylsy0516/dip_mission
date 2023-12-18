@@ -1,4 +1,7 @@
 # planner coefs
+
+left_or_right: 2 # 0: nurse 1:pile 2: left 3: right
+
 # 频率
 conrtol_freq: 2
 

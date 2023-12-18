@@ -82,17 +82,21 @@ void GlobalPlanner::setTask(std::vector<cv::Point> &points)
             if (left_or_right == 0)
             {
                 task = task_object::turn_left;
-                task_msg.data = task;
-                task_pub.publish(task_msg);
             }
             else
             {
                 task = task_object::turn_right;
-                task_msg.data = task;
-                task_pub.publish(task_msg);
+
             }
+
+            // 嘘，这里是个小秘密
+            task = nh.param<int>("left_or_right", 2); 
+              
+            task_msg.data = task;
+            task_pub.publish(task_msg);
         }
     }
+    
     if (task == task_object::turn_left)
     {
         task = task_object::pile;
